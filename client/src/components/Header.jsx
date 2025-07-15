@@ -40,7 +40,7 @@ const Header = () => {
             onClick={handleLogin}
             className="bg-white text-indigo-600 cursor-pointer font-semibold px-6 py-2 rounded-lg shadow hover:bg-indigo-100 transition-all duration-200"
           >
-            Login to Access Dashboard
+            Login to Access Dashboard.
           </button>
         </div>
         {/* Decorative Glow */}
