@@ -53,7 +53,7 @@ export const AppContextProvider = (props) => {
             console.log('No token found in localStorage');
         }
         
-        const { data } = await axios.get('/api/user/data', {
+        const { data } = await axios.get(`${backendUrl}/api/user/data`, {
           withCredentials: true,  // Enable sending cookies
           headers: {
             'Content-Type': 'application/json',

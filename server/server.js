@@ -9,6 +9,13 @@ import userRouter from './routes/userRoutes.js';
 const app = express();
 const port = process.env.PORT || 4000;
 
+console.log('🚀 Starting server...');
+console.log('Environment variables check:');
+console.log('- NODE_ENV:', process.env.NODE_ENV);
+console.log('- PORT:', process.env.PORT);
+console.log('- JWT_SECRET:', process.env.JWT_SECRET ? 'Set' : 'Missing');
+console.log('- MONGODB_URI:', process.env.MONGODB_URI ? 'Set' : 'Missing');
+
 // Validate required environment variables
 const requiredEnvVars = ['JWT_SECRET', 'MONGODB_URI'];
 const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
@@ -21,7 +28,14 @@ if (missingEnvVars.length > 0) {
 
 console.log('✅ All required environment variables are set');
 
-connectDB();
+try {
+    console.log('🔌 Connecting to database...');
+    await connectDB();
+    console.log('✅ Database connected successfully');
+} catch (error) {
+    console.error('❌ Database connection failed:', error.message);
+    process.exit(1);
+}
 
 // CORS configuration for production
 const allowedOrigins = [
@@ -29,6 +43,8 @@ const allowedOrigins = [
   'https://auth-system-tan.vercel.app',
   'https://auth-system-lemon-eight.vercel.app',
 ];
+
+console.log('🌐 Setting up CORS for origins:', allowedOrigins);
 
 app.use(cors({
   origin: function (origin, callback) {
@@ -61,7 +77,22 @@ app.get('/test', (req, res) => {
     cors: 'CORS is configured properly'
   });
 });
+
+console.log('📡 Setting up API routes...');
 app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
+console.log('✅ API routes configured');
 
-app.listen(port, () => console.log(`Server is running on PORT: ${port}`));
+// Test route to verify API is working
+app.get('/api/test', (req, res) => {
+  res.json({ 
+    message: 'API routes are working!',
+    timestamp: new Date().toISOString(),
+    routes: ['/api/auth', '/api/user']
+  });
+});
+
+app.listen(port, () => {
+    console.log(`🚀 Server is running on PORT: ${port}`);
+    console.log(`🌐 Server URL: https://auth-system-server-cty2.onrender.com`);
+});
