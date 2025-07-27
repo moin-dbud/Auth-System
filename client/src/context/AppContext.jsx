@@ -6,7 +6,8 @@ export const AppContext = createContext()
 
 export const AppContextProvider = (props) => {
     // Use environment variable or fallback to localhost for development
-    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000'
+    // Remove trailing slash if present
+    const backendUrl = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000').replace(/\/$/, '');
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [userData, setUserData] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
@@ -32,6 +33,7 @@ export const AppContextProvider = (props) => {
             getUserData();
         } catch (error) {
             console.error('Server health check failed:', error);
+            console.error('Error details:', error.response?.data || error.message);
             toast.error('Cannot connect to server. Please make sure the backend is running.');
             setIsLoading(false);
         }
