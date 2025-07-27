@@ -10,30 +10,33 @@ const app = express();
 const port = process.env.PORT || 4000;
 connectDB();
 
+// CORS configuration for production
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://auth-system-lemon-eight.vercel.app'
+  'https://auth-system-lemon-eight.vercel.app',
+  'https://your-actual-vercel-domain.vercel.app', // Replace with your actual Vercel domain
 ];
 
-// Middleware setup
-app.use(cookieParser());
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Set-Cookie'],
+}));
+
+// Body and cookie parsing
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// CORS configuration
-app.use(cors({
-    origin: function(origin, callback) {
-        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Cookie'],
-    exposedHeaders: ['set-cookie']
-}));
+app.use(cookieParser());
 
 // API Endpoints
 app.get('/', (req, res) => res.send('API Working!'));

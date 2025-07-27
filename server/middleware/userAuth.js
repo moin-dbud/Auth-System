@@ -1,10 +1,20 @@
 import jwt from 'jsonwebtoken';
 
 const userAuth = async (req, res, next) => {
-    const {token} = req.cookies;
+    // Check for token in cookies
+    let token = req.cookies.token;
+    
+    // If no token in cookies, check Authorization header
+    if (!token && req.headers.authorization) {
+        const authHeader = req.headers.authorization;
+        if (authHeader.startsWith('Bearer ')) {
+            token = authHeader.substring(7);
+            console.log('Token found in Authorization header');
+        }
+    }
 
     if (!token) {
-        console.log('No token found in cookies');
+        console.log('No token found in cookies or Authorization header');
         return res.json({ success: false, message: 'Unauthorized Access' });
     }
 
@@ -14,7 +24,6 @@ const userAuth = async (req, res, next) => {
         console.log('Token decoded:', tokenDecode);
         
         if (tokenDecode.id) {
-            // Store user ID in req.user instead of req.body
             req.user = { id: tokenDecode.id };
             console.log('User ID set in request:', tokenDecode.id);
         } else {

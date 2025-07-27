@@ -26,10 +26,12 @@ export const register = async (req, res) => {
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
+        // Set cookie with conditional secure flag
+        const isProduction = process.env.NODE_ENV === 'production';
         res.cookie('token', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+            secure: isProduction, // Only secure in production
+            sameSite: isProduction ? 'None' : 'Lax',
             maxAge: 7 * 24 * 60 * 60 * 1000,
             path: '/'
         });
@@ -44,7 +46,11 @@ export const register = async (req, res) => {
 
         await transporter.sendMail(mailOptions);
 
-        res.json({ success: true, message: 'Registration successful' });
+        res.json({ 
+            success: true, 
+            message: 'Registration successful',
+            token: token  // Include token in the response
+        });
 
     } catch (error) {
         res.json({ success: false, message: error.message })
@@ -77,19 +83,22 @@ export const login = async (req, res) => {
 
         console.log(`Login successful for user: ${user._id}`);
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
-        console.log(`Generated token: ${token.substring(0, 20)}...`);
-
-        // Set cookie with more permissive settings for development
+        
+        // Set cookie with conditional secure flag
+        const isProduction = process.env.NODE_ENV === 'production';
         res.cookie('token', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+            secure: isProduction, // Only secure in production
+            sameSite: isProduction ? 'None' : 'Lax',
+            path: '/',
             maxAge: 7 * 24 * 60 * 60 * 1000,
-            path: '/'
         });
 
-        console.log('Cookie set successfully');
-        res.json({ success: true, message: 'Login successful' });
+        res.json({ 
+            success: true, 
+            message: 'Login successful',
+            token: token  // Add this line
+        });
 
     } catch (error) {
         console.error('Login error:', error);
@@ -101,12 +110,13 @@ export const logout = async (req, res) => {
     try {
         // Clear the cookie regardless of user authentication status
         // This ensures the cookie is always cleared even if there are issues
+        const isProduction = process.env.NODE_ENV === 'production';
         res.clearCookie('token', {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+            secure: isProduction,
+            sameSite: isProduction ? 'None' : 'Lax',
             path: '/',
-            expires: new Date(0) // Force immediate expiration
+            expires: new Date(0)
         });
 
         console.log('Cookie cleared successfully');
@@ -115,10 +125,11 @@ export const logout = async (req, res) => {
     } catch (error) {
         console.error('Logout error:', error);
         // Even if there's an error, try to clear the cookie
+        const isProduction = process.env.NODE_ENV === 'production';
         res.clearCookie('token', {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+            secure: isProduction,
+            sameSite: isProduction ? 'None' : 'Lax',
             path: '/',
             expires: new Date(0)
         });
@@ -175,7 +186,7 @@ export const verifyEmail = async (req, res) => {
         }
 
         const { otp } = req.body;
-        
+
         if (!otp) {
             return res.json({ success: false, message: 'OTP is required' });
         }
@@ -223,7 +234,7 @@ export const isAuthenticated = async (req, res) => {
         if (!user.isAccountVerified) {
             return res.json({ success: false, message: 'Account not verified' });
         }
-        
+
         return res.json({ success: true, message: 'User is authenticated' });
     } catch (error) {
         console.error('Authentication error:', error);
@@ -241,7 +252,7 @@ export const sendResetOtp = async (req, res) => {
     }
 
     try {
-        
+
         const user = await userModel.findOne({ email });
         if (!user) {
             return res.json({ success: false, message: 'User not found' });
@@ -305,7 +316,7 @@ export const resetPassword = async (req, res) => {
         await user.save();
 
         return res.json({ success: true, message: 'Password reset successful' });
-        
+
     } catch (error) {
         return res.json({ success: false, message: error.message });
     }

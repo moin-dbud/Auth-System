@@ -33,11 +33,15 @@ const Navbar = () => {
     const logout = async () => {
       try {
         await axios.post(backendUrl + '/api/auth/logout');
+        // Clear token from localStorage
+        localStorage.removeItem('token');
         clearAuthState();
         toast.success('Logout Successful');
         navigate('/');
       } catch (error) {
         console.error('Logout error:', error);
+        // Clear token from localStorage even if logout fails
+        localStorage.removeItem('token');
         clearAuthState();
         toast.error(error.response?.data?.message || error.message || 'An error occurred');
       }

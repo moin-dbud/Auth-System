@@ -34,6 +34,11 @@ const Login = () => {
         console.log('Registration response:', data);
 
         if (data.success) {
+          // Store the token in localStorage with the correct key
+          if (data.token) {
+            localStorage.setItem('token', data.token);
+            console.log('Token stored in localStorage');
+          }
           toast.success(data.message || 'Registration successful');
           setIsLoggedIn(true);
           await getUserData();
@@ -51,11 +56,19 @@ const Login = () => {
         console.log('Login response:', data);
 
         if (data.success) {
+          // Store the token in localStorage
+          if (data.token) {
+            localStorage.setItem('token', data.token);
+            console.log('Token stored in localStorage');
+          }
           toast.success(data.message || 'Login successful');
           setIsLoggedIn(true);
+          console.log('⏳ Calling getUserData...');
           await getUserData();
+          console.log('✅ getUserData finished, navigating...');
           navigate("/");
-        } else {
+        }
+        else {
           toast.error(data.message || 'Login failed');
         }
       }
@@ -130,7 +143,7 @@ const Login = () => {
             Forgot Password
           </p>
 
-          <button 
+          <button
             className="w-full px-5 py-2.5 rounded-full bg-indigo-500 text-white disabled:opacity-70"
             disabled={isLoading}
           >
