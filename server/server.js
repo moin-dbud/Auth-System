@@ -13,13 +13,12 @@ connectDB();
 // CORS configuration for production
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://auth-system-lemon-eight.vercel.app',
-  'https://your-actual-vercel-domain.vercel.app', // Replace with your actual Vercel domain
+  'https://auth-system-server-cty2.onrender.com/',
+  'https://auth-system-tan.vercel.app/', 
 ];
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     
     if (allowedOrigins.indexOf(origin) !== -1) {
