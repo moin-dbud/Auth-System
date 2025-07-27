@@ -8,6 +8,19 @@ import userRouter from './routes/userRoutes.js';
 
 const app = express();
 const port = process.env.PORT || 4000;
+
+// Validate required environment variables
+const requiredEnvVars = ['JWT_SECRET', 'MONGODB_URI'];
+const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
+
+if (missingEnvVars.length > 0) {
+    console.error('❌ Missing required environment variables:', missingEnvVars);
+    console.error('Please set these variables in your Render environment settings');
+    process.exit(1);
+}
+
+console.log('✅ All required environment variables are set');
+
 connectDB();
 
 // CORS configuration for production

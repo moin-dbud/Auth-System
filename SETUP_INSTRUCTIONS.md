@@ -20,8 +20,7 @@ JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
 
 # Email Configuration (for nodemailer)
 SENDER_EMAIL=your-email@gmail.com
-SMTP_USER=your-smtp-username
-SMTP_PASSWORD=your-smtp-password
+EMAIL_PASSWORD=your-gmail-app-password
 ```
 
 ### Client (.env file in client directory)
