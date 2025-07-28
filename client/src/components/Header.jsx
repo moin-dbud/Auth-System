@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { assets } from '../assets/assets';
+import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../context/AppContext.jsx';
 import {
   ShieldCheck,
@@ -12,6 +13,8 @@ import {
 } from 'lucide-react';
 
 const Header = () => {
+
+  const navigate = useNavigate()
   const { userData } = useContext(AppContext);
 
   const Feature = ({ icon, label }) => (
@@ -22,7 +25,7 @@ const Header = () => {
   );
 
   const handleLogin = () => {
-    window.location.href = '/login';
+    navigate('/login')
   };
 
   if (!userData) {
@@ -38,6 +41,7 @@ const Header = () => {
           </p>
           <button
             onClick={handleLogin}
+
             className="bg-white text-indigo-600 cursor-pointer font-semibold px-6 py-2 rounded-lg shadow hover:bg-indigo-100 transition-all duration-200"
           >
             Login to Access Dashboard.
