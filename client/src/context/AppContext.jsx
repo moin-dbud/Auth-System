@@ -5,8 +5,6 @@ import axios from "axios";
 export const AppContext = createContext()
 
 export const AppContextProvider = (props) => {
-    // Use environment variable or fallback to localhost for development
-    // Remove trailing slash if present
     const backendUrl = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000').replace(/\/$/, '');
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [userData, setUserData] = useState(null)
