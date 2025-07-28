@@ -9,7 +9,7 @@ A secure and full-featured user authentication system built with Node.js, Expres
 
 ## 📸 Demo
 
-> Coming soon — you can host the app using Render, Vercel, or Railway for a live demo!
+### Live Demo :- https://auth-system-tan.vercel.app/
 
 ---
 
@@ -18,7 +18,7 @@ A secure and full-featured user authentication system built with Node.js, Expres
 - ✅ User Registration
 - ✅ Email Verification via OTP
 - ✅ Secure Login with JWT
-- ✅ Password Reset via Email
+- ✅ Password Reset via Email OTP
 - ✅ Protected Routes (JWT Auth Middleware)
 - ✅ Token Expiry Handling
 - ✅ bcrypt Password Hashing
@@ -60,8 +60,11 @@ npm install
 # Create a .env file and add the following:
 MONGO_URI=your_mongodb_uri
 JWT_SECRET=your_jwt_secret
-EMAIL_USER=your_email@example.com
-EMAIL_PASS=your_email_password
+SENDER_EMAIL=your_email_register_in_brevo
+SMTP_HOST=smtp_host
+SMTP_PASSWORD=your_smtp_password
+SMTP_PORT=your_smtp_port
+SMTP_USER=your_smtp_user
 
 # Start the server
 node server.js
